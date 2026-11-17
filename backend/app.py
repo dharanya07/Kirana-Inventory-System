@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -41,7 +42,8 @@ def initialize_database():
         ]
 
         connection.executemany("""
-            INSERT INTO products (name, category, quantity, price, expiry)
+            INSERT INTO products
+            (name, category, quantity, price, expiry)
             VALUES (?, ?, ?, ?, ?)
         """, sample_products)
 
@@ -72,7 +74,9 @@ def get_products():
 def add_product():
     data = request.get_json()
 
-    required_fields = ["name", "category", "quantity", "price", "expiry"]
+    required_fields = [
+        "name", "category", "quantity", "price", "expiry"
+    ]
 
     if not data or not all(field in data for field in required_fields):
         return jsonify({"error": "All product fields are required"}), 400
@@ -120,6 +124,12 @@ def delete_product(product_id):
     return jsonify({"message": "Product deleted successfully"})
 
 
+initialize_database()
+
+
 if __name__ == "__main__":
-    initialize_database()
-    app.run(debug=True, port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
