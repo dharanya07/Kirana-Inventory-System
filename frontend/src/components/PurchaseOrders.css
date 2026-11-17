@@ -1,0 +1,111 @@
+
+.purchase-page {
+  padding: 25px;
+}
+
+.purchase-page h1 {
+  color: #243b53;
+}
+
+.purchase-page > p {
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+.purchase-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.purchase-card,
+.purchase-form,
+.purchase-table {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.purchase-card h3 {
+  color: #64748b;
+  margin: 0;
+}
+
+.purchase-card h2 {
+  color: #167d52;
+  font-size: 28px;
+}
+
+.purchase-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.purchase-form h2,
+.purchase-table h2 {
+  color: #243b53;
+}
+
+.purchase-form input,
+.purchase-form select {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.purchase-form button,
+.purchase-table button {
+  background: #167d52;
+  color: white;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.purchase-table {
+  overflow-x: auto;
+}
+
+.purchase-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+.purchase-table th,
+.purchase-table td {
+  padding: 13px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.purchase-table th {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.pending {
+  color: #b45309;
+  font-weight: bold;
+}
+
+.received {
+  color: #15803d;
+  font-weight: bold;
+}
+
+.purchase-table .delete-order {
+  background: #dc2626;
+  margin-left: 5px;
+}
+
+@media (max-width: 700px) {
+  .purchase-summary {
+    grid-template-columns: 1fr;
+  }
+}
