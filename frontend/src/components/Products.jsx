@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import './Products.css';
 
+const API = 'https://kirana-inventory-system.onrender.com/api/products';
+
 function Products() {
   const [products, setProducts] = useState([]);
   const [name, setName] = useState('');
@@ -13,11 +15,11 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API = 'http://127.0.0.1:5000/api/products';
-
+  // Fetch products from Render backend
   async function fetchProducts() {
     try {
       setError('');
+
       const response = await fetch(API);
 
       if (!response.ok) {
@@ -27,7 +29,7 @@ function Products() {
       const data = await response.json();
       setProducts(data);
     } catch (err) {
-      setError('Cannot connect to backend. Please check Flask.');
+      setError('Cannot connect to backend. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -37,10 +39,11 @@ function Products() {
     fetchProducts();
   }, []);
 
+  // Add product to database
   async function addProduct(e) {
     e.preventDefault();
 
-    if (!name.trim() || !quantity || !price || !expiry) {
+    if (!name.trim() || quantity === '' || price === '' || !expiry) {
       alert('Please fill in all fields');
       return;
     }
@@ -64,7 +67,9 @@ function Products() {
         throw new Error('Unable to add product');
       }
 
-      await fetchProducts();
+      const newProduct = await response.json();
+
+      setProducts(prevProducts => [...prevProducts, newProduct]);
 
       setName('');
       setCategory('Grocery');
@@ -74,14 +79,17 @@ function Products() {
 
       alert('Product added successfully!');
     } catch (err) {
-      alert('Could not add product. Please check the backend.');
+      alert('Could not add product. Please try again.');
     }
   }
 
+  // Delete product from database
   async function deleteProduct(id) {
-    if (!window.confirm('Are you sure you want to delete this product?')) {
-      return;
-    }
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this product?'
+    );
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`${API}/${id}`, {
@@ -92,22 +100,28 @@ function Products() {
         throw new Error('Unable to delete product');
       }
 
-      await fetchProducts();
+      setProducts(prevProducts =>
+        prevProducts.filter(product => product.id !== id)
+      );
+
       alert('Product deleted successfully!');
     } catch (err) {
-      alert('Could not delete product. Please check the backend.');
+      alert('Could not delete product. Please try again.');
     }
   }
 
+  // Search products
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Calculate stock and expiry status
   function getStatus(product) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const expiryDate = new Date(product.expiry + 'T00:00:00');
+
     const daysLeft = Math.ceil(
       (expiryDate - today) / (1000 * 60 * 60 * 24)
     );
@@ -193,7 +207,14 @@ function Products() {
 
         {loading && <p>Loading products...</p>}
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && (
+          <div>
+            <p style={{ color: 'red' }}>{error}</p>
+            <button type="button" onClick={fetchProducts}>
+              Retry
+            </button>
+          </div>
+        )}
 
         {!loading && !error && (
           <div className="table-container">
